@@ -1,0 +1,6 @@
+## Interface: 30300
+## Title: Sindra|cff0099ffGOZER|r
+## Notes: Frost Beacon Announcer. Written by |cff9482CAKnopf|r (Forscherliga EU).
+## Version: 1.1
+## Author: Knopf @Forscherliga EU
+core.lua
