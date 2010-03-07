@@ -1,5 +1,5 @@
--- Einstellungen
-local Prefix = "SindraGOZER: " -- Pröfix für z.B. die Whispers
+ï»¿-- Einstellungen
+local Prefix = "SindraGOZER: " -- PrÃ¤fix fÃ¼r z.B. die Whispers
 local Broadcast = "RAID" -- Channel in den gespamt wird
 
 -- alle unsere Combatlog Daten
@@ -34,7 +34,8 @@ SindraGOZER:SetScript("OnEvent",
 		elseif event == "ADDON_LOADED" and not loaded then
 			self:Initialize()
 		end
-	end)
+	end
+)
 SindraGOZER:RegisterEvent("ADDON_LOADED")
 
 function SindraGOZER:Initialize()
@@ -54,8 +55,8 @@ function SindraGOZER:CheckZone()
 	-- http://www.wowwiki.com/API_GetSubZoneText
 	subzone    = GetSubZoneText()
 	difficulty = GetInstanceDifficulty()
-	-- hässlich, sollte mir mal was anderes einfallen lassen
-	if subzone == "The Frost Queen's Lair" or subzone == "Der Hort der Frostkönigin"  then
+	-- hÃ¤sslich, sollte mir mal was anderes einfallen lassen
+	if subzone == "The Frost Queen's Lair" or subzone == "Der Hort der FrostkÃ¶nigin"  then
 		self:message("Looking for |TInterface\\Icons\\ability_hunter_markedfordeath:16|tFrost Beacons!")
 		self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 	else			
@@ -66,7 +67,7 @@ end
 local Raidicons = {1,2,3,4,6,5} -- http://www.wowwiki.com/API_SetRaidTarget
 local beaconTargets = {} -- Tabelle in der die Spieler reingeschrieben werden
 local lastBeaconTimestamp = time() -- Zeitstempel zum resetten der Liste
-local beacon_delta = 5 -- Sekunden die zwischen den Beacon Casts maximal liegen dürfen
+local beacon_delta = 5 -- Sekunden die zwischen den Beacon Casts maximal liegen dÃ¼rfen
 local numBeacons = {2,5,2,5} --  Index 1-4, entspricht der DungeoDifficulty
 local Whispers = {} -- wird der Reihe nach an die Frost Beacon Opfer gesendet
 Whispers[1] = { --  10 Normal
@@ -87,11 +88,11 @@ function SindraGOZER:Beacons()
 	end	
 	-- Zeit setzen
 	lastBeaconTimestamp = time()
-	-- Die Tabelle der Reihenfolge mit Namen der Spieler befüllen
+	-- Die Tabelle der Reihenfolge mit Namen der Spieler befÃ¼llen
 	beaconTargets[#beaconTargets + 1] = dstName	
 	-- sobald wir alle Beacons gesammelt haben
 	if #beaconTargets == numBeacons[difficulty] then		
-		-- evtl. sollte sowas vorher abgeprüft werden
+		-- evtl. sollte sowas vorher abgeprÃ¼ft werden
 		if IsRaidOfficer() or IsRaidLeader() then			
 			for n = 1, numBeacons[difficulty], 1 do
 				-- Raidtarget Icons setzen
@@ -99,7 +100,7 @@ function SindraGOZER:Beacons()
 				-- Whispers
 				self:whisper(Whispers[difficulty][n], beaconTargets[n])
 			end
-			-- HÄSSLICH ... muss schöner gehen!
+			-- HAESSLICH ... muss schÃ¶ner gehen!
 			if difficulty == 1 then				
 				self:channel(format("    ({rt%u}%s)   ({rt%u}%s)",Raidicons[1],beaconTargets[1],Raidicons[2],beaconTargets[2]))
 			elseif difficulty == 2 then
