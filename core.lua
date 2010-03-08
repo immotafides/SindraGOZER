@@ -75,9 +75,9 @@ Whispers[1] = { --  10 Normal
 	"  ( ) (x)  "
 }
 Whispers[2] = { --  25 Normalmode
-	"(x) ( ) ( )",
-	"( ) (x) ( )",
 	"( ) ( ) (x)",
+	"( ) (x) ( )",
+	"(x) ( ) ( )",
 	"  (x) ( )  ",
 	"  ( ) (x)  "
 }
@@ -104,10 +104,11 @@ function SindraGOZER:Beacons()
 			if difficulty == 1 then				
 				self:channel(format("    ({rt%u}%s)   ({rt%u}%s)",Raidicons[1],beaconTargets[1],Raidicons[2],beaconTargets[2]))
 			elseif difficulty == 2 then
-				-- erste Reihe
-				self:channel(format("   ({rt%u}%s)   ({rt%u}%s)   ({rt%u}%s)",Raidicons[1],beaconTargets[1],Raidicons[2],beaconTargets[2],Raidicons[3],beaconTargets[3]))
 				-- zeite Reihe			
 				self:channel(format("        ({rt%u}%s)   ({rt%u}%s)",Raidicons[4],beaconTargets[4],Raidicons[5],beaconTargets[5]))
+				-- erste Reihe
+				self:channel(format("   ({rt%u}%s)   ({rt%u}%s)   ({rt%u}%s)",Raidicons[1],beaconTargets[1],Raidicons[2],beaconTargets[2],Raidicons[3],beaconTargets[3]))
+
 			end
 		else
 			self:message("You need to be leader or assistant to do this.")
