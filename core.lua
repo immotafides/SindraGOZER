@@ -78,8 +78,8 @@ Whispers[2] = { --  25 Normalmode
 	"( ) ( ) (x)",
 	"( ) (x) ( )",
 	"(x) ( ) ( )",
-	"  (x) ( )  ",
-	"  ( ) (x)  "
+	"  ( ) (x)  ",
+	"  (x) ( )  "
 }
 function SindraGOZER:Beacons()	
 	-- Reset der Beacons
