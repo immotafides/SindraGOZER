@@ -25,9 +25,8 @@ SindraGOZER:SetScript("OnEvent",
 				if spellID == FrostBeaconID then
 					self:Beacons()
 				end
-			end
 			elseif type == "SPELL_AURA_REMOVED" or type == "SPELL_AURA_REMOVED_DOSE" then
-				spellID = select(9, ...)
+				spellID, spellName = select(9, ...)
 				if spellID == FrostBeaconID then
 					self:RemoveRaidIcon()
 				end
