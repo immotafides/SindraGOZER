@@ -122,7 +122,7 @@ function SindraGOZER:Beacons()
 				self:channel(format("    ({rt%u}%s)   ({rt%u}%s)",Raidicons[2],beaconTargets[2],Raidicons[1],beaconTargets[1]))
 			elseif difficulty == 2 then
 				-- zeite Reihe			
-				self:channel(format("        ({rt%u}%s)   ({rt%u}%s)",Raidicons[5],beaconTargets[5],Raidicons[4],beaconTargets[4]))
+				self:channel(format("           ({rt%u}%s)   ({rt%u}%s)",Raidicons[5],beaconTargets[5],Raidicons[4],beaconTargets[4]))
 				-- erste Reihe
 				self:channel(format("   ({rt%u}%s)   ({rt%u}%s)   ({rt%u}%s)",Raidicons[3],beaconTargets[3],Raidicons[2],beaconTargets[2],Raidicons[1],beaconTargets[1]))
 
