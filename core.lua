@@ -5,8 +5,16 @@ local Broadcast = "RAID_WARNING" -- Channel in den gespamt wird
 -- Spell ID des Frost Beacons
 local FrostBeaconID = 70126
 
+-- Spell IDs des Mystic Buffet
+local MysticBuffetID = {
+	[72528] = true,
+	[72530] = true,
+	[70127] = true,
+	[72529] = true
+ }
+
 -- alle unsere Combatlog Daten
-local timestamp, type, srcGUID, srcName, srcFlgs, dstGUID, dstName, dstFlgs, spellID, spellName
+local timestamp, type, srcGUID, srcName, srcFlgs, dstGUID, dstName, dstFlgs, spellID, spellName, spellSchool, auraType, amount
 
 -- Frame bauen
 local SindraGOZER = CreateFrame("FRAME", "SindraGOZER")
@@ -21,7 +29,14 @@ SindraGOZER:SetScript("OnEvent",
 			if type == "SPELL_AURA_APPLIED" or type == "SPELL_AURA_APPLIED_DOSE" then
 				-- http://www.wowwiki.com/API_COMBAT_LOG_EVENT#Prefixes
 				-- http://www.wowwiki.com/API_COMBAT_LOG_EVENT#Suffixes
-				spellID, spellName = select(9, ...)
+				spellID, spellName, spellSchool, auraType, amount = select(9, ...)				
+				-- nur Spieler tracken
+				if not UnitInRaid(dstName) then return end				
+				-- Mystic Buffet
+				if MysticBuffetID[spellID] and amount == 6 then
+					self:MysicBuffetAnnounce()
+				end				
+				-- Frost Beacon
 				if spellID == FrostBeaconID then
 					self:Beacons()
 				end
@@ -31,8 +46,7 @@ SindraGOZER:SetScript("OnEvent",
 					self:RemoveRaidIcon()
 				end
 			end
-		elseif event:sub(1,12) == "ZONE_CHANGED" then
-			--self:message(format("Zone changed to %q",GetSubZoneText()))
+		elseif event:sub(1,12) == "ZONE_CHANGED" then			
 			self:CheckZone()
 		elseif event == "ADDON_LOADED" and not loaded then
 			self:Initialize()
@@ -60,7 +74,7 @@ function SindraGOZER:CheckZone()
 	difficulty = GetInstanceDifficulty()
 	-- hässlich, sollte mir mal was anderes einfallen lassen
 	if subzone == "The Frost Queen's Lair" or subzone == "Der Hort der Frostkönigin"  then
-		self:message("Looking for |TInterface\\Icons\\ability_hunter_markedfordeath:16|tFrost Beacons!")
+		self:message("Looking for |TInterface\\Icons\\ability_hunter_markedfordeath:16|tFrost Beacons and |TInterface\\Icons\\spell_arcane_arcane03:16|tMysic Buffets!")
 		self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 	else
 		self:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
@@ -121,6 +135,15 @@ end
 
 function SindraGOZER:RemoveRaidIcon()
 	SetRaidTarget(dstName,0)
+end
+
+function SindraGOZER:MysicBuffetAnnounce()
+	local msg = format("%s took too many stacks!", dstName)
+	if IsRaidOfficer() or IsRaidLeader() then
+		SendChatMessage(Prefix..msg, "RAID", nil)
+	else
+		self:message(msg)
+	end	
 end
 
 --  HELPER  ZEUGS
