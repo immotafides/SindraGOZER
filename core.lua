@@ -11,7 +11,7 @@ local MysticBuffetID = {
 	[72530] = true,
 	[70127] = true,
 	[72529] = true
- }
+}
 
 -- alle unsere Combatlog Daten
 local timestamp, type, srcGUID, srcName, srcFlgs, dstGUID, dstName, dstFlgs, spellID, spellName, spellSchool, auraType, amount
@@ -26,7 +26,7 @@ SindraGOZER:SetScript("OnEvent",
 			-- http://www.wowwiki.com/API_COMBAT_LOG_EVENT#Base_Parameters
 			timestamp, type, srcGUID, srcName, srcFlgs, dstGUID, dstName, dstFlgs = select(1, ...)
 			--  AUREN    
-			if type == "SPELL_AURA_APPLIED" or type == "SPELL_AURA_APPLIED_DOSE" then
+			if type:sub(1,18) == "SPELL_AURA_APPLIED" then
 				-- http://www.wowwiki.com/API_COMBAT_LOG_EVENT#Prefixes
 				-- http://www.wowwiki.com/API_COMBAT_LOG_EVENT#Suffixes
 				spellID, spellName, spellSchool, auraType, amount = select(9, ...)				
@@ -40,7 +40,7 @@ SindraGOZER:SetScript("OnEvent",
 				if spellID == FrostBeaconID then
 					self:Beacons()
 				end
-			elseif type == "SPELL_AURA_REMOVED" or type == "SPELL_AURA_REMOVED_DOSE" then
+			elseif type:sub(1,18) == "SPELL_AURA_REMOVED" then
 				spellID, spellName = select(9, ...)
 				if spellID == FrostBeaconID then
 					self:RemoveRaidIcon()
@@ -48,7 +48,7 @@ SindraGOZER:SetScript("OnEvent",
 			end
 		elseif event:sub(1,12) == "ZONE_CHANGED" then			
 			self:CheckZone()
-		elseif event == "ADDON_LOADED" and not loaded then
+		elseif event == "ADDON_LOADED" then
 			self:Initialize()
 		end
 	end
@@ -85,11 +85,11 @@ local Raidicons = {1,2,3,4,6,5} -- http://www.wowwiki.com/API_SetRaidTarget
 local beaconTargets = {} -- Tabelle in der die Spieler reingeschrieben werden
 local lastBeaconTimestamp = time() -- Zeitstempel zum resetten der Liste
 local beacon_delta = 5 -- Sekunden die zwischen den Beacon Casts maximal liegen dürfen
-local numBeacons = {2,5,2,5} --  Index 1-4, entspricht der DungeoDifficulty
+local numBeacons = {2,5,2,6} --  Index 1-4, entspricht der DungeoDifficulty
 local Whispers = {} -- wird der Reihe nach an die Frost Beacon Opfer gesendet
 Whispers[1] = { --  10 Normal
-	"  ( ) (x)  ",
-	"  (x) ( )  "
+	"( ) (x)",
+	"(x) ( )"
 }
 Whispers[2] = { --  25 Normalmode
 	"( ) ( ) (x)",
@@ -97,6 +97,18 @@ Whispers[2] = { --  25 Normalmode
 	"(x) ( ) ( )",
 	"  ( ) (x)  ",
 	"  (x) ( )  "
+}
+Whispers[3] = { --  10 Heroic
+	"( ) (x)",
+	"(x) ( )"
+}
+Whispers[4] = { --  25 Normalmode
+	"( ) ( ) (x)",
+	"( ) ( ) (x)",
+	"( ) (x) ( )",
+	"( ) (x) ( )",
+	"(x) ( ) ( )",
+	"(x) ( ) ( )"
 }
 function SindraGOZER:Beacons()
 	-- Reset der Beacons
@@ -120,12 +132,13 @@ function SindraGOZER:Beacons()
 			-- HAESSLICH ... muss schöner gehen!
 			if difficulty == 1 then
 				self:channel(format("    ({rt%u}%s)   ({rt%u}%s)",Raidicons[2],beaconTargets[2],Raidicons[1],beaconTargets[1]))
-			elseif difficulty == 2 then
-				-- zeite Reihe			
-				self:channel(format("           ({rt%u}%s)   ({rt%u}%s)",Raidicons[5],beaconTargets[5],Raidicons[4],beaconTargets[4]))
-				-- erste Reihe
+			elseif difficulty == 2 then				
+				self:channel(format("           ({rt%u}%s)   ({rt%u}%s)",Raidicons[5],beaconTargets[5],Raidicons[4],beaconTargets[4]))				
 				self:channel(format("   ({rt%u}%s)   ({rt%u}%s)   ({rt%u}%s)",Raidicons[3],beaconTargets[3],Raidicons[2],beaconTargets[2],Raidicons[1],beaconTargets[1]))
-
+			elseif difficulty == 3 then
+				self:channel(format("    ({rt%u}%s)   ({rt%u}%s)",Raidicons[2],beaconTargets[2],Raidicons[1],beaconTargets[1]))
+			elseif difficulty == 4 then
+				self:channel(format("   ({rt%u}%s {rt%u}%s)   ({rt%u}%s {rt%u}%s)   ({rt%u}%s {rt%u}%s)",Raidicons[6],beaconTargets[6],Raidicons[5],beaconTargets[5],Raidicons[4],beaconTargets[4],Raidicons[3],beaconTargets[3],Raidicons[2],beaconTargets[2],Raidicons[1],beaconTargets[1]))
 			end
 		else
 			self:message("You need to be leader or assistant to do this.")
@@ -140,7 +153,7 @@ end
 function SindraGOZER:MysicBuffetAnnounce()
 	local msg = format("%s took too many stacks!", dstName)
 	if IsRaidOfficer() or IsRaidLeader() then
-		SendChatMessage(Prefix..msg, "RAID", nil)
+		self:channel(Prefix..msg, "RAID")
 	else
 		self:message(msg)
 	end	
@@ -152,9 +165,14 @@ function SindraGOZER:whisper(msg, name)
    SendChatMessage(Prefix..msg, "WHISPER", nil, name)
 end
 
-function SindraGOZER:channel(msg)
+function SindraGOZER:channel(msg, ...)
+	chan = ...
 	if msg then
-		SendChatMessage(msg, Broadcast, nil)
+		if not chan then 
+			SendChatMessage(msg, Broadcast, nil)
+		else
+			SendChatMessage(msg, chan, nil)
+		end
 	end	
 end
 
