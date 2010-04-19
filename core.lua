@@ -6,7 +6,7 @@ local Broadcast = "RAID_WARNING" -- Channel in den gespamt wird
 local FrostBeaconID = 70126
 
 -- Spell ID von Unchained Magic
-local UnchainedMagicID = "Unchained Magic"
+local UnchainedMagicID = 69762
 
 -- Spellid der Frostbomb im 25er Heroic
 local FrostBombID = 71055
