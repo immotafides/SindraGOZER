@@ -1,6 +1,6 @@
 ## Interface: 30300
 ## Title: Sindra|cff0099ffGOZER|r
-## Notes: Frost Beacon & Mystic Buffet Announcer. Written by |cff9482CAKnopf|r (Forscherliga EU).
-## Version: 1.22
+## Notes: Frost Beacon & Fail Announcer. Written by |cff9482CAKnopf|r (Forscherliga EU).
+## Version: 1.24
 ## Author: Knopf @Forscherliga EU
 core.lua

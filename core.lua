@@ -8,8 +8,11 @@ local FrostBeaconID = 70126
 -- Spell ID von Unchained Magic
 local UnchainedMagicID = 69762
 
--- Spellid der Frostbomb im 25er Heroic
+-- Spell ID der Frostbomb im 25er Heroic
 local FrostBombID = 71055
+
+-- Spell ID des Blistering Cold
+local BlisteringID = 71049
 
 -- Spell IDs des Mystic Buffet
 local MysticBuffetID = {
@@ -60,8 +63,12 @@ SindraGOZER:SetScript("OnEvent",
 				if spellID == FrostBombID then
 					self:FrostBombAnnounce()
 				end
-			end
-			
+			elseif type == "SPELL_DAMAGE" then
+				spellID, spellName, spellSchool, amount, overkill = select(9, ...)
+				if overkill > 0 and spellID == BlisteringID then
+					self:BlisteringColdAnnounce()
+				end
+			end			
 		elseif event:sub(1,12) == "ZONE_CHANGED" then			
 			self:CheckZone()
 		elseif event == "ADDON_LOADED" then
@@ -90,8 +97,6 @@ function SindraGOZER:CheckZone()
 	-- Workaround für die ICC Heroic (http://forums.wowace.com/showthread.php?t=17936)
 	local _, _, diff, _, _, hero, flag = GetInstanceInfo(); 
 	difficulty = (flag and (2-(diff%2)+2*hero)) or diff;
-	-- Testoutput
-	self:message("Difficulty: "..difficulty)
 	-- hässlich, sollte mir mal was anderes einfallen lassen
 	if subzone == "The Frost Queen's Lair" or subzone == "Der Hort der Frostkönigin"  then
 		self:message("Looking for |TInterface\\Icons\\ability_hunter_markedfordeath:16|tFrost Beacons and |TInterface\\Icons\\spell_arcane_arcane03:16|tMystic Buffets!")
@@ -198,7 +203,7 @@ function SindraGOZER:RemoveRaidIcon()
 end
 
 function SindraGOZER:MysicBuffetAnnounce()
-	local msg = format("%s took too many stacks!", dstName)
+	local msg = format("%s took too many stacks(%s)!", dstName, amount)
 	if IsRaidOfficer() or IsRaidLeader() then
 		self:channel(Prefix..msg, "RAID")
 	else
@@ -207,7 +212,16 @@ function SindraGOZER:MysicBuffetAnnounce()
 end
 
 function SindraGOZER:FrostBombAnnounce()
-	local msg = format("%s died in a Frost Bomb!", dstName)
+	local msg = format("{rt8} %s died in a Frost Bomb!", dstName)
+	if IsRaidOfficer() or IsRaidLeader() then
+		self:channel(Prefix..msg, "RAID")
+	else
+		self:message(msg)
+	end	
+end
+
+function SindraGOZER:BlisteringColdAnnounce()
+	local msg = format("{rt8} %s was not fast enough!", dstName)
 	if IsRaidOfficer() or IsRaidLeader() then
 		self:channel(Prefix..msg, "RAID")
 	else
