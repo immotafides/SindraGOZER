@@ -1,4 +1,4 @@
-## Interface: 30300
+## Interface: 40000
 ## Title: Sindra|cff0099ffGOZER|r
 ## Notes: Frost Beacon & Fail Announcer. Written by |cff9482CAKnopf|r (Forscherliga EU).
 ## Version: 1.24

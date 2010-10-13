@@ -128,12 +128,12 @@ Whispers[3] = { --  10 Heroic
 	"(x) ( )"
 }
 Whispers[4] = { --  25 Normalmode
-	"( ) ( ) (x)",
-	"( ) ( ) (x)",
-	"( ) (x) ( )",
-	"( ) (x) ( )",
-	"(x) ( ) ( )",
-	"(x) ( ) ( )"
+	"( ) ( ) (x) - RECHTS",
+	"( ) ( ) (x) - RECHTS",
+	"( ) (x) ( ) - MITTE",
+	"( ) (x) ( ) - MITTE",
+	"(x) ( ) ( ) - LINKS",
+	"(x) ( ) ( ) - LINKS"
 }
 function SindraGOZER:Beacons()
 	-- Reset der Beacons
